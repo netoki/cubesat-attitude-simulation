@@ -1,0 +1,35 @@
+function exportAttitudeCSV(filename, t, log)
+%EXPORTATTITUDECSV Export quaternion attitude history for Blender
+%
+% Inputs:
+%   filename : string, e.g. 'attitude_data.csv'
+%   t        : 1xN or Nx1 time vector [s]
+%   q_log    : 4xN quaternion history [q0;q1;q2;q3]
+%
+% Output CSV format:
+%   t, q0, q1, q2, q3
+
+    % --- Sanity checks ---
+    if size(log,1) ~= 4
+        error('q_log must be 4xN with rows [q0 q1 q2 q3]');
+    end
+
+    t = t(:);           % Force Nx1
+    log = log.';    % 4xN -> Nx4
+
+    if length(t) ~= size(log,1)
+        error('Time vector length must match quaternion samples');
+    end
+
+    % --- Assemble output matrix ---
+    data = [t, log];  % Nx5
+
+    % --- Write CSV ---
+    headers = {'time','q0','q1','q2','q3'};
+    data = [t(:), log.q(1,:)', log.q, q2(:), q3(:)];
+
+    writecell([headers; num2cell(data)], 'quaternionCSV.csv');
+
+
+    fprintf('Attitude CSV written: %s (%d samples)\n', filename, length(t));
+end
